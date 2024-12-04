@@ -8,14 +8,16 @@ import os
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-memo",       type=str,           default='benchmark_1001')
+    parser.add_argument("-memo",       type=str,           default='AdvancedColight_8_jn_666')
     parser.add_argument("-mod",        type=str,           default="AdvancedColight")
-    parser.add_argument("-eightphase",  action="store_true", default=False)
+    parser.add_argument("-eightphase",  action="store_true", default=True)
     parser.add_argument("-gen",        type=int,            default=1)
     parser.add_argument("-multi_process", action="store_true", default=True)
     parser.add_argument("-workers",    type=int,            default=3)
+    parser.add_argument("-seed",    type=int,            default=666)
     parser.add_argument("-hangzhou",    action="store_true", default=False)
     parser.add_argument("-jinan",       action="store_true", default=True)
+    parser.add_argument("-newyork", action="store_true",    default=False)
     return parser.parse_args()
 
 
@@ -34,7 +36,12 @@ def main(in_args=None):
                              "anon_3_4_jinan_real_2500.json"]
         num_rounds = 80
         template = "Jinan"
-
+    elif in_args.newyork:
+        count = 3600
+        road_net = "28_7"
+        traffic_file_list = ["anon_28_7_newyork_real_triple.json","anon_28_7_newyork_real_double.json"]
+        num_rounds = 80
+        template = "newyork_28_7"
     NUM_COL = int(road_net.split('_')[1])
     NUM_ROW = int(road_net.split('_')[0])
     num_intersections = NUM_ROW * NUM_COL
@@ -48,6 +55,7 @@ def main(in_args=None):
         deploy_dic_agent_conf = merge(getattr(config, "DIC_BASE_AGENT_CONF"), dic_agent_conf_extra)
 
         dic_traffic_env_conf_extra = {
+            "SEED": in_args.seed,
             "NUM_ROUNDS": num_rounds,
             "NUM_GENERATORS": in_args.gen,
             "NUM_AGENTS": 1,

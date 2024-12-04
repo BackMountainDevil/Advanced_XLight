@@ -504,7 +504,7 @@ class CityFlowEnv:
         print(" ============= self.eng.reset() to be implemented ==========")
         cityflow_config = {
             "interval": self.dic_traffic_env_conf["INTERVAL"],
-            "seed": 0,
+            "seed": self.dic_traffic_env_conf["SEED"],
             "laneChange": True,
             "dir": self.path_to_work_directory+"/",
             "roadnetFile": self.dic_traffic_env_conf["ROADNET_FILE"],
@@ -661,7 +661,14 @@ class CityFlowEnv:
             path_to_log_file = os.path.join(self.path_to_log, "vehicle_inter_{0}.csv".format(inter_ind))
             dic_vehicle = self.list_intersection[inter_ind].get_dic_vehicle_arrive_leave_time()
             df = pd.DataFrame.from_dict(dic_vehicle, orient="index")
+            att=self.eng.get_average_travel_time()
+            df.insert(df.shape[1], 'eng-att', att)   # 追加一列，记录从engin获取的 att
             df.to_csv(path_to_log_file, na_rep="nan")
+        # save eng.att into file
+        att=self.eng.get_average_travel_time()
+        print(f"CityFlowEnv.batch_log_2 att:{att}")
+        with open(os.path.join(self.path_to_log, "eng-att.txt"), "w") as f:
+            f.write(str(att))
 
     def batch_log(self, start, stop):
         for inter_ind in range(start, stop):
@@ -671,12 +678,17 @@ class CityFlowEnv:
             path_to_log_file = os.path.join(self.path_to_log, "vehicle_inter_{0}.csv".format(inter_ind))
             dic_vehicle = self.list_intersection[inter_ind].get_dic_vehicle_arrive_leave_time()
             df = pd.DataFrame.from_dict(dic_vehicle, orient="index")
+            att=self.eng.get_average_travel_time()
+            df.insert(df.shape[1], 'eng-att', att)   # 追加一列，记录从engin获取的 att
             df.to_csv(path_to_log_file, na_rep="nan")
             
             path_to_log_file = os.path.join(self.path_to_log, "inter_{0}.pkl".format(inter_ind))
             f = open(path_to_log_file, "wb")
             pickle.dump(self.list_inter_log[inter_ind], f)
             f.close()
+        print(f"CityFlowEnv.batch_log_2 att:{att}")
+        with open(os.path.join(self.path_to_log, "eng-att.txt"), "w") as f:
+            f.write(str(att))
 
     def bulk_log_multi_process(self, batch_size=100):
         assert len(self.list_intersection) == len(self.list_inter_log)

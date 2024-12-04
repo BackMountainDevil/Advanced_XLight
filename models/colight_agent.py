@@ -26,6 +26,9 @@ class CoLightAgent(Agent):
                  intersection_id="0"):
         super(CoLightAgent, self).__init__(
             dic_agent_conf, dic_traffic_env_conf, dic_path, intersection_id)
+        seed=dic_traffic_env_conf["SEED"]
+        np.random.seed(seed)
+        random.seed(seed)
         self.CNN_layers = dic_agent_conf['CNN_layers']
         self.num_agents = dic_traffic_env_conf['NUM_INTERSECTIONS']
         self.num_neighbors = min(dic_traffic_env_conf['TOP_K_ADJACENCY'], self.num_agents)
