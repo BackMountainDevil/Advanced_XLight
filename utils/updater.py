@@ -9,7 +9,7 @@ import random
 class Updater:
 
     def __init__(self, cnt_round, dic_agent_conf, dic_traffic_env_conf, dic_path):
-
+        random.seed(dic_traffic_env_conf["SEED"])
         self.cnt_round = cnt_round
         self.dic_path = dic_path
         self.dic_traffic_env_conf = dic_traffic_env_conf
@@ -74,7 +74,7 @@ class Updater:
         start_time = time.time()
         print("Start load samples at", start_time)
         if self.dic_traffic_env_conf['MODEL_NAME'] in ["EfficientPressLight",  "EfficientMPLight",
-                                                       "AdvancedMPLight", "AdvancedDQN", "Attend"]:
+                                                       "AdvancedMPLight", "AdvancedDQN", "Attend","Attention"]:
             sample_set_all = []
             for i in range(self.dic_traffic_env_conf['NUM_INTERSECTIONS']):
                 sample_set = self.load_sample_with_forget(i)
